@@ -44,62 +44,9 @@
         /* --- APP LAYOUT --- */
         .app-container {
             display: flex;
+            flex-direction: column;
             height: 100vh;
             width: 100vw;
-        }
-
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--bg-sidebar);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease;
-            z-index: 100;
-        }
-
-        .sidebar-header {
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-            padding: 0 24px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-family: 'Playfair Display', serif;
-            font-size: 20px;
-            color: var(--pnj-gold);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .sidebar-nav {
-            padding: 20px 0;
-            flex-grow: 1;
-        }
-
-        .nav-item {
-            padding: 15px 24px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: var(--text-sidebar);
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            font-size: 15px;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--pnj-gold);
-            border-right: 3px solid var(--pnj-gold);
-        }
-
-        .nav-item i {
-            width: 20px;
-            text-align: center;
-            font-size: 18px;
         }
 
         /* --- MAIN CONTENT --- */
@@ -107,7 +54,8 @@
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            min-width: 0; /* Important for flex-child truncation */
+            min-height: 0;
+            overflow: hidden;
         }
 
         /* --- TOP HEADER --- */
@@ -120,7 +68,51 @@
             justify-content: space-between;
             padding: 0 30px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            z-index: 10;
+            z-index: 100;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .header-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--pnj-red);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            height: 100%;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            height: 100%;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--pnj-red);
+            border-bottom: 3px solid var(--pnj-red);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
         .menu-toggle {
@@ -130,13 +122,6 @@
             cursor: pointer;
             background: none;
             border: none;
-        }
-
-        .page-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--pnj-red);
         }
 
         .user-profile {
@@ -547,35 +532,54 @@
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: -100%; /* Hidden by default */
-                top: 0;
-                bottom: 0;
-                box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+            .header-nav {
+                display: none;
+                position: absolute;
+                top: var(--header-height);
+                left: 0;
+                width: 100%;
+                background-color: var(--bg-card);
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0;
+                box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+                border-top: 1px solid var(--border-color);
+                z-index: 101;
             }
 
-            .sidebar.mobile-open {
-                left: 0;
+            .header-nav.mobile-open {
+                display: flex;
+            }
+
+            .nav-item {
+                width: 100%;
+                padding: 15px 30px;
+                border-bottom: 1px solid var(--border-color);
+                border-left: 3px solid transparent;
+                height: auto;
+            }
+
+            .nav-item:hover, .nav-item.active {
+                border-bottom: 1px solid var(--border-color);
+                border-left: 3px solid var(--pnj-red);
+                background-color: var(--pnj-bg);
             }
 
             .menu-toggle {
                 display: block;
             }
 
+            .user-info { display: none; }
+
             .content-area {
                 padding: 20px;
             }
 
-            .page-title {
-                font-size: 18px;
-            }
-            
-            /* Overlay for mobile sidebar */
+            /* Overlay for mobile dropdown menu */
             .sidebar-overlay {
                 display: none;
                 position: fixed;
-                top: 0; left: 0; right: 0; bottom: 0;
+                top: var(--header-height); left: 0; right: 0; bottom: 0;
                 background: rgba(0,0,0,0.5);
                 z-index: 90;
             }
@@ -597,35 +601,23 @@
     <!-- Mobile Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- SIDEBAR NAVIGATION -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <i class="fa-solid fa-gem" style="margin-right: 10px;"></i>
+    <!-- HEADER NAVIGATION -->
+    <header class="top-header">
+        <div class="header-logo">
+            <i class="fa-solid fa-gem"></i>
             Creative Hub
         </div>
-        <nav class="sidebar-nav">
+        
+        <nav class="header-nav" id="headerNav">
             <a class="nav-item active" data-target="dashboard">
-                <i class="fa-solid fa-chart-pie"></i>
-                Tổng Quan
+                <i class="fa-solid fa-chart-pie"></i> Tổng Quan
             </a>
             <a class="nav-item" data-target="brochure">
-                <i class="fa-solid fa-book-open"></i>
-                E-Brochure
+                <i class="fa-solid fa-book-open"></i> E-Brochure
             </a>
         </nav>
-    </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-wrapper">
-        <!-- HEADER -->
-        <header class="top-header">
-            <div style="display: flex; align-items: center; gap: 20px;">
-                <button class="menu-toggle" id="menuToggle">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-                <h1 class="page-title" id="pageTitle">Báo Cáo Hiệu Quả Thiết Kế</h1>
-            </div>
-            
+        <div class="header-right">
             <div class="user-profile">
                 <div class="user-info">
                     <div class="user-name">Quản Lý SMT</div>
@@ -633,8 +625,14 @@
                 </div>
                 <div class="avatar">SMT</div>
             </div>
-        </header>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
 
+    <!-- MAIN CONTENT -->
+    <main class="main-wrapper">
         <!-- DASHBOARD CONTENT -->
         <div class="content-area">
             
@@ -834,18 +832,12 @@
         // 1. Navigation Logic
         const navItems = document.querySelectorAll('.nav-item, .nav-trigger');
         const viewSections = document.querySelectorAll('.view-section');
-        const pageTitle = document.getElementById('pageTitle');
-        const sidebar = document.getElementById('sidebar');
+        const headerNav = document.getElementById('headerNav');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-        const titleMap = {
-            'dashboard': 'Báo Cáo Tổng Quan & Dự Án',
-            'brochure': 'Trình Xem E-Brochure Trực Tiếp'
-        };
-
         function switchView(targetId) {
-            // Update Navigation active state (only for sidebar items)
-            document.querySelectorAll('.sidebar .nav-item').forEach(nav => {
+            // Update Navigation active state
+            document.querySelectorAll('.header-nav .nav-item').forEach(nav => {
                 if(nav.getAttribute('data-target') === targetId) {
                     nav.classList.add('active');
                 } else {
@@ -857,10 +849,10 @@
             viewSections.forEach(section => {
                 section.classList.remove('active');
             });
-            document.getElementById('view-' + targetId).classList.add('active');
-
-            // Update Title
-            pageTitle.innerText = titleMap[targetId];
+            const targetSection = document.getElementById('view-' + targetId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
 
             // Close mobile menu if open
             if(window.innerWidth <= 768) {
@@ -885,16 +877,22 @@
         const menuToggle = document.getElementById('menuToggle');
         
         function openMobileMenu() {
-            sidebar.classList.add('mobile-open');
+            headerNav.classList.add('mobile-open');
             sidebarOverlay.classList.add('active');
         }
 
         function closeMobileMenu() {
-            sidebar.classList.remove('mobile-open');
+            headerNav.classList.remove('mobile-open');
             sidebarOverlay.classList.remove('active');
         }
 
-        menuToggle.addEventListener('click', openMobileMenu);
+        menuToggle.addEventListener('click', () => {
+            if (headerNav.classList.contains('mobile-open')) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
         sidebarOverlay.addEventListener('click', closeMobileMenu);
 
         // 3. Simple Number Counter Animation
